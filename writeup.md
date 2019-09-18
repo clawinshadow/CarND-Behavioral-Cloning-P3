@@ -3,13 +3,7 @@
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
+[image1]: ./center_1.jpg "Sample Image"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -63,60 +57,32 @@ The model used an adam optimizer, so the learning rate was not tuned manually (m
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
-
-For details about how I created the training data, see the next section. 
+I just use the sample training data from workspace path: /opt/carnd_p3/data/IMG, it works well so I didn't collect additional training data myself.
 
 ### Model Architecture and Training Strategy
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+The overall strategy to design an appropriate solution including the following steps:
+1. Collect the training images
+2. Loading the images, then split them to training & validation datasets
+3. Design an appropriate network model for training
+4. Test the model in the simulator with autonomous mode
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+Because a sample dataset was provided, so I ignored the first step at the beginning, planned to collect additional data if necessary. Then I write some codes to load the sample images from parsing the driving_log.csv file, codes from line 9 to 38, as the project instructions suggested, I use generators to reduce the memory usage when loading images. 
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+The most important step should be how to choose an appropriate training model, at the very first, I just implement a simple linear regression model to fit the training dataset using Keras, and then run the model with simulator, in order to verify whether the whole process works or not. After the process was verified correct, I chose a more complex and reasonable network, the LeNet for training, but the performance was not very good, the car often run out of the roads, then I tried to extend the training dataset by flipping the images, and also using the left & right camera images, the performance improved a lot, but still not perfect, the car fell off the track in a few spots. Finally, I tried to use the NVIDIA network, it works very well, the car is able to drive autonomously around the track without leaving the road, even I just use the original sample dataset for training. The detail architecture was introduced in prior section, and the final running result is recored in ```video.mp4```
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
+The final model architecture (model.py lines 51-70) consisted of a convolution neural network provided by NVIDIA, the detail model architecture was listed in the prior section: __An appropriate model architecture has been employed__
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
+I just use the sample data as training set and validation set, and only the center camera images. Here is an example image of center lane driving:
 
-![alt text][image2]
+![alt text][image1]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I finally randomly shuffled the data set and put 20% of the data into a validation set. 
 
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by the validation loss will increase if epochs greater than 5. I used an adam optimizer so that manually training the learning rate wasn't necessary.
