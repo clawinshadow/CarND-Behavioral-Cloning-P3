@@ -20,11 +20,11 @@
 #### 1. Submission includes all required files and can be used to run the simulator in autonomous mode
 
 My project includes the following files:
-* model.py: containing the script to create and train the model
-* drive.py: for driving the car in autonomous mode
-* model.h5: containing a trained convolution neural network 
-* writeup.md: summarizing the results
-* video.mp4: the video recording the autonomous mode running result in the simulator 
+* __model.py__: containing the script to create and train the model
+* __drive.py__: for driving the car in autonomous mode
+* __model.h5__: containing a trained convolution neural network 
+* __writeup.md__: summarizing the results
+* __video.mp4__: the video recording the autonomous mode running result in the simulator 
 
 #### 2. Submission includes functional code
 Using the Udacity provided simulator and my drive.py file, the car can be driven autonomously around the track by executing 
@@ -40,15 +40,22 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+My model comes from the NVIDIA auto-driving network introduced in the course. The architecture is listed as below:
+1. **Normalization layer**: it's a lambda layer, convert the pixel value range from [0, 255] to [-0.5, 0.5]
+2. **Crop layer**: the original image shape is (160, 320, 3), crop the top 70 pixels and the bottom 25 pixels, output image shape of (66, 320, 3)
+3. **Convoluation layer 1st**: with the kernel size (5, 5), filter depth of 24, and a subsampling stride of (2, 2), and activation function of RELU to introduce nonlinearity
+4. **Convoluation layer 2nd**: with the kernel size (5, 5), filter depth of 36, and a stride of (2, 2), RELU activation function also
+5. **Convoluation layer 3rd**: with the kernel size (5, 5), filter depth of 48, and a stride of (2, 2), RELU activation function also
+6. **Convoluation layer 4th**: with the kernel size (3, 3), filter depth of 64, RELU activation function also
+7. **Convoluation layer 5th**: with the kernel size (3, 3), filter depth of 64, RELU activation function also
+8. **Full connected layer 1st**: input should be (1, 33x64), output (1, 100)
+9. **Full connected layer 2nd**: input (1, 100), output (1, 50)
+10. **Full connected layer 3rd**: input (1, 50), output (1, 10)
+11. **Final Full connected layer**: output the final steering measurement
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
 
 #### 2. Attempts to reduce overfitting in the model
-
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
-
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+I split the original dataset into training & validation dataset (0.2 of the total dataset), shuffle them and training 5 epochs, to reduce overfitting. Code line 16, 66
 
 #### 3. Model parameter tuning
 
